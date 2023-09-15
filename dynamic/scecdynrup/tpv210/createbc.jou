@@ -11,6 +11,12 @@ group "fault" add node in fault_surface fault_surface@A fault_surface@B
 nodeset 10 group fault
 nodeset 10 name "fault"
 
+group "fault_buried_edges" add node in curve 91 101 37 102 90
+nodeset 11 group fault_buried_edges
+nodeset 11 name "fault_buried_edges"
+
+
+
 # ----------------------------------------------------------------------
 # Create nodeset for +x face
 # ----------------------------------------------------------------------
@@ -55,3 +61,4 @@ nodeset 26 name "face_zpos"
 
 
 # End of file
+

@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------------
 # Set units to SI.
 # ----------------------------------------------------------------------
-#{Units('si')}
+${Units('si')}
 #
 # ----------------------------------------------------------------------
 # Reset geometry.
@@ -31,14 +31,14 @@ undo off
 #
 # Fault dip is 60 degrees and width is 15.0 km.
 #
-#{blockWidth=48.0*km}
-#{blockLength=64.0*km}
-#{blockHeight=36.0*km}
-#{faultDipAngle=60.0}
-#{faultWidth=15.0*km}
-#{faultLength=30.0*km}
+${blockWidth=48.0*km}
+${blockLength=64.0*km}
+${blockHeight=36.0*km}
+${faultDipAngle=60.0}
+${faultWidth=15.0*km}
+${faultLength=30.0*km}
 #
-#{xoffset=0.5*faultWidth*cosd(faultDipAngle)}
+${xoffset=0.5*faultWidth*cosd(faultDipAngle)}
 
 brick x {blockWidth} y {blockLength} z {blockHeight}
 
@@ -49,31 +49,33 @@ volume 1 move x {-xoffset} y 0 z {-0.5*blockHeight}
 # Create fault surface
 # ----------------------------------------------------------------------
 create planar surface with plane xplane offset 0
-#{fI=Id("surface")}
+${fI=Id("surface")}
 rotate surface {fI} angle {faultDipAngle-90}  about vertex 12 9 include_merged 
 create surface extended from surface {fI}
 delete surface {fI}
-#{fI=Id("surface")}
+${fI=Id("surface")}
 webcut volume 1 with plane surface {fI}
 surface 9 name "fault_body"
 
 # Split fault surface
 create vertex 0.0 {-0.5*faultLength} 0
-#{vAn=Id("vertex")}
+${vAn=Id("vertex")}
 create vertex 0.0 {+0.5*faultLength} 0
-#{vAp=Id("vertex")}
+${vAp=Id("vertex")}
 create vertex {-blockHeight/tand(faultDipAngle)} {-0.5*faultLength} {-blockHeight}
-#{vBn=Id("vertex")}
+${vBn=Id("vertex")}
 create vertex {-blockHeight/tand(faultDipAngle)} {+0.5*faultLength} {-blockHeight}
-#{vBp=Id("vertex")}
+${vBp=Id("vertex")}
 create vertex {-faultWidth*cosd(faultDipAngle)} {-0.5*faultLength} {-faultWidth*sind(faultDipAngle)}
-#{vCn=Id("vertex")}
+${vCn=Id("vertex")}
 create vertex {-faultWidth*cosd(faultDipAngle)} {+0.5*faultLength} {-faultWidth*sind(faultDipAngle)}
-#{vCp=Id("vertex")}
+${vCp=Id("vertex")}
+create curve vertex {vCn} {vCp}
+${cC=Id("curve")}
 split surface fault_body across location vertex {vAn} location vertex {vBn}
-split surface fault_body@A across location vertex {vAp} location vertex {vBp}
-split surface fault_body@A across location vertex {vCn} location vertex {vCp}
-surface fault_body@C rename "fault_surface"
+split surface fault_body across location vertex {vAp} location vertex {vBp}
+project curve {cC} onto surface fault_body@B imprint
+surface fault_body@B rename "fault_surface"
 delete vertex all
 
 # asperity (to ensure exact alignment with mesh)
@@ -88,7 +90,7 @@ delete volume {idChopper}
 # Create interface surface to honor stress discontinuity in TPV13
 # ----------------------------------------------------------------------
 create planar surface with plane zplane offset {sind(faultDipAngle)*-13.8*km}
-#{sI=Id("surface")}
+${sI=Id("surface")}
 webcut volume 1 4 with plane surface {sI}
 
 # ----------------------------------------------------------------------
@@ -99,5 +101,6 @@ merge all
 delete body 3 6 7 8
 
 # End of file
+
 
 

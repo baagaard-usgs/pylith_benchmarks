@@ -15,7 +15,7 @@ playback 'geometry.jou'
 # ----------------------------------------------------------------------
 # Set discretization size and scheme
 # ----------------------------------------------------------------------
-#{dx=200*m}
+${dx=200*m}
 surface all scheme trimesh
 volume all scheme tetmesh
 playback 'gradient.jou'
@@ -32,13 +32,13 @@ mesh volume all
 # ----------------------------------------------------------------------
 # Smooth mesh to improve quality
 # ----------------------------------------------------------------------
-#{condnum=2.0}
-#{loop(4)}
+${condnum=2.0}
+${loop(2)}
 cleanup volume all
 volume all smooth scheme condition number beta {condnum} cpu 10
 smooth volume all
-#{condnum=condnum-0.1}
-#{endloop}
+${condnum=condnum-0.2}
+${endloop}
 
 # ----------------------------------------------------------------------
 # Setup boundary conditions.
@@ -52,4 +52,6 @@ export mesh "tet4_200m.exo" dimension 3 overwrite
 
 
 # End of file
+
+
 
